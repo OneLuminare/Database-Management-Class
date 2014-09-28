@@ -1,19 +1,16 @@
 Lab 4 SQL
 =========
 
-* For question 2 and 5, one could use SELECT DISTINCT to show only unique pid's, its unclear in the question if that 
-  was what you wanted.
+1. select distinct city from agents where aid in (select aid from orders where cid in (select cid from customers where name = 'Tiptop'));
 
-1. select city from agents where aid in (select aid from orders where cid in (select cid from customers where name = 'Tiptop'));
-
-2. select pid from orders where aid in (select aid from orders where cid in (select cid from customers where city = 'Kyoto'));
+2. select distinct pid from orders where aid in (select aid from orders where cid in (select cid from customers where city = 'Kyoto'));
 
 3. select cid, name from customers where cid in (select cid from orders where aid != 'a06');
 
 4. select cid, name from customers where cid in (select cid from orders where cid in (select cid from orders where pid = 'p01')
 	 AND pid = 'p07');
 
-5. select pid from orders where cid in (select cid from orders where aid = 'a04');
+5. select distinct pid from orders where cid in (select cid from orders where aid = 'a04');
 
 6. select name, discount from customers where cid in (select cid from orders where aid in (select aid from agents where city = 
 	'Dallas' or city = 'Newark'));

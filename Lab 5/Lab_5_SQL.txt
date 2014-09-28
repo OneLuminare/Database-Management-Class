@@ -1,0 +1,12 @@
+Lab 5 SQL Statements
+====================
+
+1. select distinct agents.city from agents
+	inner join orders on agents.aid = orders.aid
+	inner join customers on orders.cid = customers.cid
+	where customers.name = 'Tiptop';
+
+2. select distinct orders.pid from orders where orders.aid in 
+	( select orders.aid from orders 
+		inner join customers on customers.cid = orders.cid where customers.city='Kyoto');  
+      
