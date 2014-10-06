@@ -4,9 +4,30 @@ Lab 5 SQL Statements
 1. select distinct agents.city from agents
 	inner join orders on agents.aid = orders.aid
 	inner join customers on orders.cid = customers.cid
-	where customers.name = 'Tiptop';
+	where customers.name = 'Tiptop' order by agents.city asc;
 
-2. select distinct orders.pid from orders where orders.aid in 
-	( select orders.aid from orders 
-		inner join customers on customers.cid = orders.cid where customers.city='Kyoto');  
+2. select  distinct agentorders.pid from orders as agentorders 
+	inner join orders as customerorders on agentorders.aid = customerorders.aid
+	inner join customers on customers.cid = customerorders.cid
+	where customers.city = 'Kyoto' order by agentorders.pid asc;   
+
+3. select name from customers where cid not in(select cid from orders) order by name asc;
+
+4. select distinct customers.name from customers full outer join orders on 
+	customers.cid = orders.cid where orders.ordno is null order by customers.name asc;
+
+5. select distinct customers.name as "Customer Name", agents.name as "Agents Name" from agents 
+	inner join orders on agents.aid = orders.aid 
+	inner join customers on orders.cid = customers.cid 
+	where agents.city = customers.city order by customers.name asc;
+
+6. select distinct customers.name as "Customer Name", agents.name as "Agents Name", 
+	agents.city as "Common City" from agents inner join customers on 
+	agents.city=customers.city order by agents.city asc, customers.name asc;
+
+7. select customers.name,customers.city from ((select min(product_count) as product_min from (select count(*) as product_count, products.city as product_city from products 
+	group by products.city)as  pcount1) as mincount 
+  inner join (select count(*) as product_count, products.city as product_city from products group by products.city) as pcount2 on pcount2.product_count=mincount.product_min
+  inner join customers on pcount2.product_city=customers.city ) order by customers.name asc;
+
       
