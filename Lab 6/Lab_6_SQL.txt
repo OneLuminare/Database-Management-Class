@@ -1,0 +1,36 @@
+Lab 6 SQL
+=========
+
+1. select customers.name,customers.city from ((select max(product_count) as product_max from (select count(*) as product_count, products.city as product_city from products 
+	group by products.city)as  pcount1) as maxcount 
+  inner join (select count(*) as product_count, products.city as product_city from products group by products.city) as pcount2 on pcount2.product_count=maxcount.product_max
+  inner join customers on pcount2.product_city=customers.city ) order by customers.name asc;
+
+2. select customers.name,customers.city from 
+	(select max(count_table.pcount) as pmax from (select count(*) as pcount,products.city as pcity from products group by products.city) as count_table ) as max_table
+	inner join (select count(*) as pcount,products.city as pcity from products group by products.city) as count_table on count_table.pcount = max_table.pmax
+	inner join customers on customers.city = count_table.pcity order by customers.name asc;
+
+  * NOTE: Both queries one and two will give all customers from both cities, but their are no customers in Newark
+
+3. select products.pid from (select avg(priceusd) as avgprice from products) as products_avg
+  inner join products on products.priceusd > products_avg.avgprice order by pid asc;
+
+4.select customers.name,orders.pid,orders.dollars from orders  inner join customers on orders.cid = customers.cid order by dollars asc;
+
+5.  select coalesce(sum(orders.dollars),0) as sumdoll,customers.name from orders 
+	right outer join customers on customers.cid=orders.cid 
+	group by customers.name 
+	order by customers.name asc;
+
+6. select customers.name as "Customer Name", products.name as "Product Name", agents.name as "Agent Seller" from orders 
+	inner join agents on orders.aid = agents.aid 
+	inner join products on orders.pid = products.pid
+	inner join customers on orders.cid = customers.cid
+	where agents.city = 'New York' order by customers.name asc;
+
+7. select orders.*  from orders
+	inner join customers on orders.cid = customers.cid
+	inner join products on orders.pid = products.pid 
+	where orders.dollars != (orders.qty * products.priceusd) * (1 - discount/100);
+
