@@ -1,0 +1,2 @@
+I could have created trigger constraints to fully enforce a coach can only coach one age group at a time, but I am a procrastinator 
+and thought I could save all three labs until 2:30 on sunday. 

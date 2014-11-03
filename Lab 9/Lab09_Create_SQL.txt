@@ -1,0 +1,62 @@
+DROP TABLE IF EXISTS team_players;
+DROP TABLE IF EXISTS assitant_coaches;
+DROP TABLE IF EXISTS coach_age_groups;
+DROP TABLE IF EXISTS teams;
+DROP TABLE IF EXISTS coaches;
+DROP TABLE IF EXISTS players;
+DROP TABLE IF EXISTS leagues;
+DROP TYPE IF EXISTS TYPE_AGE_GROUP;
+
+CREATE TYPE TYPE_AGE_GROUP AS ENUM ('under 10','10 - 14','over 14');
+
+CREATE TABLE leagues(
+	league_name text NOT NULL,
+	PRIMARY KEY(league_name)
+);
+
+CREATE TABLE coaches(
+	cid char(6) NOT NULL,
+	fname text NOT NULL,
+	lname text NOT NULL,
+	address text NOT NULL,
+	phonenumber char(10) NOT NULL CHECK (phonenumber ~ '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+	years_coached smallint NOT NULL CHECK ( years_coached >= 0 ),
+	PRIMARY KEY(cid)
+);
+
+CREATE TABLE players(
+	pid char(6) NOT NULL,
+	fname text NOT NULL,
+	lname text NOT NULL,
+	address text NOT NULL,
+	phonenumber char(10) NOT NULL CHECK (phonenumber ~ '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+	PRIMARY KEY(pid)
+);
+
+CREATE TABLE teams(
+	team_name text NOT NULL,
+	league_name text NOT NULL REFERENCES leagues(league_name),
+	age_group TYPE_AGE_GROUP,
+	head_coach_cid char(6) NOT NULL REFERENCES coaches(cid),
+	PRIMARY KEY(team_name)
+);
+
+CREATE TABLE team_players(
+	team_name text NOT NULL REFERENCES teams(team_name),
+	pid char(6) NOT NULL REFERENCES players(pid),
+	PRIMARY KEY(team_name,pid),
+	UNIQUE(pid)
+);
+
+CREATE TABLE assitant_coaches(
+	team_name text NOT NULL REFERENCES teams(team_name),
+	cid char(6) NOT NULL REFERENCES coaches(cid),
+	PRIMARY KEY(team_name,cid)
+);
+
+CREATE TABLE coach_age_groups(
+	cid char(6) NOT NULL REFERENCES coaches(cid),
+	age_group TYPE_AGE_GROUP NOT NULL,
+	PRIMARY KEY(cid,age_group)
+);
+
