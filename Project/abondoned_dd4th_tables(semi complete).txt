@@ -1,0 +1,601 @@
+Character
+=========
++ pid
+- class
+- lvl
+- paragon path
+- alignement
+- epic destiny
+- XP
+- race (implies size)
+* size
+- age
+- gender 
+- height
+- weight
+- initivive modifer (*)
+- armor class (*)
+- fortitude defense(*)
+- reflex defense(*)
+- will defense(*)
+- str (implies ability modifer for all attributes)
+- dex
+- char
+- wis
+- int
+- con
+- passive insight
+- passive perception
+- cur healing surges
+- max healing surges
+* max daily powers
+* max utility powers
+* max 
+# bloodied value
+# healing surge value
+- hp
+- action points 289
+* race features
+# basic attack values
+# skill modifiers
+* class features
+* paragon features
+* epic destiny features
+* power index
+	- at will powers
+	- daily powers
+	- encounter powers
+	- utilitiy powers
+* magic item index
+	? daily item powers
+- personality traits
+- manerisms
+- background
+- appearance
+* companions
+- Campaign Notes
+* money
+* rituals
+* equipment index
+- equiped head slot 
+- equiped neck slot
+- equiped armor
+- equiped hand slot
+- equiped hand slot 2
+- equiped arm slot
+- equiped arm slot 2
+- equiped waist slot
+- equiped feet slot
+- equiped ring slot
+- equiped ring slot 2
+
+Character_Spell_Book
+====================
+- pid
+- power
+
+Character_Money
+===============
+- pid
+- cp
+- sp
+- gp
+- pp
+- ad
+
+Character_Equipment
+===================
++ pid
++ name
+
+Character_Magic_Items
+=====================
++ pid
++ name
++ enhacement name
++ level
+
+Character_Rituals
+=================
++ pid
+- name
+- flavor text
+- description
+- level
+- category
+- time min
+- dur min
+- componet price gp
+- market price gp
+- key skill
+
+Character_Companions
+====================
++ pid
++ companion_pid (as pid)
+
+
+Character_Skills
+================
++ pid
+- skill
+
+Character Feats
+===============
++ pid
+- feat
+
+Character_Parties
+=================
++ pid
+- party name
+
+Characer_Dieties
+================
++ pid
+- diety
+
+Character_Languages
+===================
++ pid
+- language
+
+Character Feats
+=====
++ name
+- feat name
+
+Level_Up_Guide
+==============
++ lvl
+- exp
+- (en) ability score increase
+- feats
+- at-will powers
+- encounter powers
+- daily powers
+- utility powers
+
+Level_Up_Bonues
+===============
++ lvl
+- en bonueses
+
+
+Languages
+=========
++ language
+- script
+
+Race Languages
+==============
++ language
++ race
+
+Alignement
+==========
++ alignement
+- description
+
+Diety
+=====
++ name
+- alignement
+- description
+
+Diety Commandments
+==================
++ name
+- commandment
+
+Race
+====
++ name
+- average height min
+- average height max
+- average weight min
+- average weight max
+* ability scores
+- (en) size
+- movement range
+- (en) vision
+* skill values
+- description
+- physical qualities
+
+
+Race_Ability_Modifiers
+======================
++ name
++ attribute
+- value
+
+Race_Skill_Modifiers
+====================
++ name
++ skill
+- value
+
+Race_Traits
+===========
++ race (as Race.name)
++ trait name
+? description
+
+Power_Sources
+=============
++ power source
+- description
+- power title
+
+Class
+=====
++ name
+- power source
+- implements
+* vital status
+* defense bonus
+* key abilities
+- base hit points
+# hit points + constitution
+- base healing surges per day
+# base hs + con modifier
+- hit points per level
+- num trainable skills
+* class trained skills
+* class features
+
+Class_Trainable_Skills
+======================
++ class
+- skill
+
+Class_Starting_Skills
+=============================
++ class
+- skill
+
+
+Class_Features
+==============
++ name
+- feature 
+- description
+
+Class Skills
+============
++ name
++ skill
+- modifer
+
+Class_Defense_Bonus
+===================
++ name
++ (en) Will,Fortitude,Relfex
+- value
+
+
+Class_Key_Abilities
+===================
++ name 
++ attribute (en)
+
+Class_Armor_Proficiencies
+=========================
++ name
+- equipment type (en)
+? feat 
+
+Class_Weapon_Proficiencies
+==========================
++ name
+- weapon type (en)
+? feat
+
+Class_At_Will_Powers
+====================
++ name
++ class
+- level
+
+Class_Encounter_Powers
+======================
++ name
++ class
+- level
+
+Class_Utility_Powers
+======================
++ name
++ class
+- level
+
+Class_Daily_Powers
+======================
++ name
++ class
+- level
+
+Paragon_Powers
+=====================
++ name
++ power
+- lvl
+
+Class_Paragons
+==============
++ name
+- prequisite class
+- description
+
+Class_Paragon_Prereq_Skills
+===========================
++ name
+- skill
+- state (en Required(and) option(or) )
+
+Class_Paragon_Features
+======================
++ name
+- feature
+- description
+
+Epic_Destinies
+==============
++ name
+- description
+- epiq quest
+
+Epic_Destiny_Features
+=====================
++ name
+- feature
+- description
+
+Epic_Destiny_Prereq_Skills
+==========================
++ name
+- skill
+- state (en)
+
+Epic_Destiny_Prereq_Attributes
+==============================
++ name
+- attrubite (en)
+- value
+- state (en)
+
+Epic_Destiny_Prereq_Classes
+===========================
++ name
+- class
+- state (en)
+
+
+Epic_Destiny_Powers
+=====================
++ name
++ power
+- lvl
+
+Powers
+======
++ name
+- type (en Daily, Utility, Encounter, At_Will )
+- flavor text
+? damage type
+? effect type
+- power source
+? implement
+? weapon type (en)
+- action type (en standard action, move actions, immediate interrupts,immediate reactions, minor actions,free actions,no actions)
+- trigger condition
+? attack type (en melee weapon, melee value, melee touch, ranged weapon, ranged value, ranged sight, close burst, close value, 
+	area burst value within value, area wall value within number,personal)
+? attack range value 1
+? attack range value 2
+- prequisite skill
+- requirment
+- target
+- attack attribute(en)
+- attack attruibute modifier
+- attack target( en AC,Reflex,Fortitude, Will )
+? hit num dice
+? hit dice value
+? hit weapon dice
+- hit attribue modifer (en)
+- hit damage type
+- miss damage percentage
+- miss effects
+- secondary target
+- teirtary target
+- effect
+? conjuration
+? zone
+- sustain type (en 
+? sustain effect
+
+Power_Hit_Dice_Increase
+=======================
++ name
+- lvl
+? hit num dice
+? hit dice value
+? hit weapon dice
+
+Damage_Type
+===========
++ name
+- description
+
+Effect_Type
+===========
++ name
+- description
+
+Skills
+======
+- name
+- attribute modifier
+- armor check penality (bool)
+- description
+
+
+Feat
+====
+- name
+- benifit
+- special
+
+Feat_Prereq_Ability_Scores
+==========================
+- name (feat)
+- ability
+- value
+
+Feat_Prereq_Skills
+==================
+- name (feat)
+- skill
+
+Class Feats
+===========
+- name
+- class
+
+Race Feats
+==========
+- name
+- race
+
+Divinity Feats
+==============
+- name
+
+Feat Powers
+===========
+- name(feat)
+- power
+
+Monetary_Units
+==============
+- unit
+- ex cp
+- ex sp
+- ex gp
+- ex pp
+- ex ad
+- weight
+
+Equipment
+=========
+- name
+- type (en )
+- class en(light hevay
+- armor class
+- minimum enhancment bonus
+- speed
+- check
+- price
+- weight lbs
+
+Weapons
+=======
+- name
+- style
+- prof
+- damage
+- range
+- price
+- weight 
+- group (en axe, flail, crossbow, bow, hammer, heavy blade, light blade, mace, pick, polearm, spear, sling, staff, 
+- properties
+
+Melee Weapons
+=============
+- name
+- class(en simple, military, superior, improvised )
+
+Ranged Weapons
+==============
+- name
+- class (en simple, military, superior, improvised )
+
+
+Item
+====
+- name
+- included in
+- price
+- weight
+
+Implement
+=========
+- name
+- implement type
+
+Magic Enhancement
+=================
+- name
+- min level
+- desc
+- property
+- ehancement
+
+Armor Magic Enhancement
+=======================
+- name
+- armor type
+
+Weapon Magic Enhancement
+========================
+- name
+- critical
+
+Weapon Magic Enhancement Targets
+================================
+- name
+- weapon type (en)
+
+Implement Magic Enhancement
+===========================
+- name
+- implement type (en)
+
+Magic Enhancement Power
+=======================
+- name
+- power
+- type (en daily, healing surge )
+
+Magic Enhancement Levels
+========================
+- name
+- level
+- bonus
+- price
+
+Extra_Equipment_Magic Enhacnements
+==================================
+- name
+- item slot(en armslot, neckslot, waist slot, hand slot, feet slot, head slot, ring slot )
+
+Potions
+=======
+- name
+- price
+- power
+
+CREATE TABLE character_races (
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	PRIMARY KEY(name)
+)
+
+CREATE TYPE type_class_role AS ENUM ('controller','leader','defender','striker');
+CREATE TABLE character_class (
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	role type_class_role NOT NULL,
+	PRIMARY KEY(name)
+);

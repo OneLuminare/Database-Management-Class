@@ -1,0 +1,504 @@
+
+DROP TABLE IF EXISTS character_skills;
+DROP TABLE IF EXISTS character_resistances;
+DROP TABLE IF EXISTS weapon_skills;
+DROP TABLE IF EXISTS titles;
+DROP TABLE IF EXISTS artes;
+DROP TABLE IF EXISTS skills;
+DROP TABLE IF EXISTS synthesis_weapon_components;
+DROP TABLE IF EXISTS synthesis_components;
+DROP TABLE IF EXISTS weapons;
+DROP TABLE IF EXISTS weapon_types;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS accessories;
+DROP TABLE IF EXISTS characters;
+DROP TABLE IF EXISTS components;
+DROP TABLE IF EXISTS special_items;
+DROP TABLE IF EXISTS consumable_items;
+DROP TABLE IF EXISTS cooking_items;
+DROP TABLE IF EXISTS items;
+
+DROP TYPE IF EXISTS TYPE_ELEMENT;
+DROP TYPE IF EXISTS TYPE_ART;
+DROP TYPE IF EXISTS TYPE_FATAL_STRIKE;
+DROP TYPE IF EXISTS TYPE_SKILL;
+DROP TYPE IF EXISTS TYPE_WEAPON;
+DROP TYPE IF EXISTS TYPE_ARMOR;
+
+
+CREATE TYPE TYPE_ELEMENT AS ENUM ( 'fire','water','wind','earth','light','darkness', 'none' );
+CREATE TYPE TYPE_ART AS ENUM ( 'base', 'arcane', 'altered', 'burst', 'novice spell','intermediate spell','advanced spell');
+CREATE TYPE TYPE_FATAL_STRIKE AS ENUM ('red', 'blue', 'green', 'none');
+CREATE TYPE TYPE_SKILL AS ENUM ( 'attack', 'defense', 'agility', 'constitution' );
+CREATE TYPE TYPE_WEAPON AS ENUM( 'main', 'off hand' );
+CREATE TYPE TYPE_ARMOR AS ENUM ( 'helmet' , 'armor' );
+
+
+CREATE TABLE skills (
+	name TEXT NOT NULL,
+	type TYPE_SKILL NOT NULL,
+	sp INT NOT NULL CHECK (sp > 0),
+	description TEXT NOT NULL,
+	PRIMARY KEY(name)
+);	
+
+CREATE TABLE characters (
+	name TEXT NOT NULL,
+	PRIMARY KEY(name)
+);
+
+
+CREATE TABLE character_resistances(
+	character TEXT NOT NULL REFERENCES characters(name),
+	element TYPE_ELEMENT NOT NULL  DEFAULT 'none',
+	PRIMARY KEY( character,element )
+);
+
+CREATE TABLE character_skills(
+	character TEXT NOT NULL REFERENCES characters(name),
+	skill TEXT NOT NULL REFERENCES skills(name),
+	PRIMARY KEY(character,skill)
+);
+
+CREATE TABLE weapon_types (
+	character TEXT NOT NULL REFERENCES characters(name),
+	type TEXT NOT NULL,
+	PRIMARY KEY(character,type)
+);
+
+CREATE TABLE titles(
+	name TEXT NOT NULL,
+	character TEXT NOT NULL REFERENCES characters(name),
+	PRIMARY KEY(name)
+);
+	
+CREATE TABLE artes (
+	name TEXT NOT NULL,
+	character TEXT NOT NULL REFERENCES characters(name),
+	type TYPE_ART NOT NULL,
+	alter_skill TEXT REFERENCES skills(name),
+	element TYPE_ELEMENT NOT NULL  DEFAULT 'none',
+	tp INT NOT NULL CHECK( tp >= 0 ),
+	fatal_strike_type TYPE_FATAL_STRIKE NOT NULL DEFAULT 'none',
+	description TEXT NOT NULL,
+	PRIMARY KEY(name)
+);
+
+CREATE TABLE items(
+	itemid INT NOT NULL CHECK( itemid > -1 ),
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE cooking_items(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE consumable_items(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	PRIMARY KEY(itemid)
+);	
+
+CREATE TABLE special_items(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	PRIMARY KEY(itemid)
+);	
+
+CREATE TABLE components(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE accessories(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE weapons(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	character TEXT NOT NULL,
+	type TEXT NOT NULL,
+	hand TYPE_WEAPON NOT NULL,
+	atk INT NOT NULL CHECK (atk >= 0),
+	mag_atk INT NOT NULL CHECK (mag_atk >= 0),
+	FOREIGN KEY (character,type) 
+		REFERENCES weapon_types(character,type),
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE equipment(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	character TEXT NOT NULL REFERENCES characters(name),
+	type TYPE_ARMOR NOT NULL,
+	def INT NOT NULL CHECK (def >= 0),
+	mag_def INT NOT NULL CHECK (mag_def >= 0),
+	PRIMARY KEY(itemid)
+);
+
+CREATE TABLE synthesis_components(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	component INT NOT NULL REFERENCES components(itemid),
+	qty INT NOT NULL CHECK (qty > 0),
+	PRIMARY KEY(itemid,component)
+);
+
+CREATE TABLE synthesis_weapon_components(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	component INT NOT NULL REFERENCES weapons(itemid),
+	PRIMARY KEY(itemid,component)
+);	
+
+CREATE TABLE weapon_skills(
+	itemid INT NOT NULL REFERENCES items(itemid),
+	skill TEXT NOT NULL REFERENCES skills(name),
+	PRIMARY KEY(itemid,skill)
+);
+
+INSERT INTO characters(name)
+	VALUES ('Yuri'),
+		('Estelle'),
+		('Judith');
+
+INSERT INTO character_resistances(character,element)
+	VALUES ('Yuri','fire'),
+	('Yuri','earth'),
+	('Yuri','wind'),
+	('Yuri','water'),
+	('Yuri','light'),
+	('Yuri','darkness'),
+	('Estelle','fire'),
+	('Estelle','water'),
+	('Estelle','light'),
+	('Estelle','darkness'),
+	('Judith','fire');
+
+INSERT INTO skills(name,type,sp,description)
+	VALUES ('Strength 2','attack',4,'Increases physical attack by 10%'),
+	('Hell Fire','attack',4,'Changes an arte.'),
+	('Super Chain 3','agility',16,'Able to link altered and base artes.'),
+	('Aerial Magic Guard','defense', 7, 'Able to use Magic Guard in mid-air'),
+	('Great Deluge','constitution', 4, 'Changes an arte.'),
+	('Eternal Support','constitution', 9 , 'Effects of support magic occasionally last for duration of battle.'),
+	('Athenor','defense', 4, 'Changes an arte.'),
+	('Auto Medicine','constitution',6,'Ocassionally casts healing spells upon receiving damage.'),
+	('Swords Up','attack',3,'Increases P.Atk when a sword is equipped.'),
+	('Landing Step','agility',5,'Able to cancel action with a backstep upon landing.'),
+	('Aerial Artes 3','agility',12,'Can link arcane to base in air.'),
+	('Spear Master','defense',5,'Increases magic defense when a spear is equipped.'),
+	('Pow Hammer Revenge','agility',8,'Occasionally counter with a Pow Hammer when attacked.'),
+	('Magic 3','attack',6,'Increases spell attack by 15%.');
+
+
+INSERT INTO character_skills(character,skill)
+	VALUES ('Yuri','Strength 2'),
+	('Estelle','Strength 2'),
+	('Judith','Strength 2'),
+	('Yuri','Hell Fire'),
+	('Estelle','Hell Fire'),
+	('Judith','Hell Fire'),
+	('Yuri','Super Chain 3'),
+	('Judith','Aerial Magic Guard'),
+	('Yuri','Great Deluge'),
+	('Judith','Great Deluge'),
+	('Estelle','Great Deluge'),
+	('Estelle','Eternal Support'),
+	('Yuri','Athenor'),
+	('Judith','Athenor'),
+	('Estelle','Athenor'),
+	('Estelle','Auto Medicine'),
+	('Yuri','Swords Up'),
+	('Yuri','Landing Step'),
+	('Judith','Aerial Artes 3'),
+	('Judith','Spear Master'),
+	('Estelle','Pow Hammer Revenge'),
+	('Estelle','Magic 3');
+
+INSERT INTO artes(name,character,type,alter_skill,element,tp,fatal_strike_type,description)
+	VALUES ('Azure Edge','Yuri','base','Hell Fire','wind',5,'green','Unleash the force of the wind.'),
+	('Raging Blast','Yuri','arcane', NULL, 'none', 20, 'red','Unleash a burst of power from within that downs the enemy.'),
+	('Divine Wolf','Yuri','burst', NULL,'none'  , 0, 'green','Slash in a quick, circular motion.'),
+	('Luna Talon','Judith','altered',NULL ,'none' , 11, 'blue','Jump in the air and land with a force to take down surrounding enemeies.'),
+	('Luna Storm','Judith','base','Great Deluge','wind',16,'blue','Cause a whirlwind with your lance.'),
+	('Moonbeam','Judith','arcane',NULL , 'none' , 24,'red','Teleport above the enemy, then strike down with your lance.'),
+	('First Aid','Estelle','novice spell', 'Athenor', 'light', 6, 'none' , 'Restore a small amount of HP to one ally.'),
+	('Resurrection','Estelle','intermediate spell', NULL, 'light', 40, 'none' , 'Ressurect one KOed ally.'),
+	('Holy Lance','Estelle','advanced spell', NULL, 'light', 48, 'red', 'Run an enemy through with a divine spear.');
+
+INSERT INTO weapon_types(character,type)
+	VALUES ('Yuri','Sword'),
+	('Yuri','Axe'),
+	('Yuri','Glove'),
+	('Judith','Spear'),
+	('Judith','Staff'),
+	('Judith','Shield'),
+	('Estelle','Rod'),
+	('Estelle','Short Sword'),	
+	('Estelle','Book');
+	
+
+INSERT INTO items(itemid,name,description)
+	VALUES (212,'Tsurgi','Replica of an ancient double edged sword.'),
+	(102,'Knight Sword','A sword that knights use.'),
+	(780,'Rhino Horn','A light, yet solid horn collected from a rhino type monster.'),
+	(467,'Knuckle Duster','A belt with rivets attached that is wound around the hands.'),
+	(803,'Strong Vine','This vine will never break.'),
+	(798,'Solid Thorn','A sharp thorn.'),
+	(134,'Ogre Axe','A single-handed axe with the power of a feirce beast.'),
+	(670,'Sharp Blade','The blade of a sycth.'),
+	(680,'Tolbyccian Fish','Fish found mainly around Tolbyccia.'),
+	(120,'Beast Slayer','With a blade powerful enough to slay any beast.'),
+	(119,'Naginata','An ancient spear with a refined blade.'),
+	(920,'Geo Stone','Magnetic stone.'),
+	(918,'Iron Tip','Iron spear head.'),
+	(450,'Aegis','A sturdy shield that protects you from everything.'),
+	(950,'Rare Metal','An extremely rare metal ore said to be fictional.'),
+	(948,'Great Crab Shell','A person can fit into this shell.'),
+	(100,'Dragon Tooth','A spear using a dragons tooth as its spearhead.'),
+	(930,'Demon Bone','A bone of demonic origin.'),
+	(928,'Sacred Tree','A twig taken from a scared tree.'),
+	(111,'Estoc +1','A solid sword designed to pierce through armor.'),
+	(110,'Estoc','A solid sword designed to pierce through armor.'),
+	(791,'Long Needle','Giant bee stinger.'),
+	(792,'Toad Oil','Oil from poisonus toad.'),
+	(99,'Hydronomos','A report on the location of the sacred Temple of Water.'),
+	(802,'Grimoire Page','A page out of a grimoire. Is this dangerous?'),
+	(799,'Filifolia Leaf','A leaf collect from a filifolia.'),
+	(399,'Star Rod','A star-shaped rod.'),
+	(742,'Crystal','Discharges electricity when pressure is applied.'),
+	(741,'Light Star Gem','A unique stone that glows white.'),
+	(500,'Iron Sallet','An iron war helmet.'),
+	(699,'Hyper Helm','The ultimate head gear.'),
+	(451,'Rare Plate','A masterpiece crafted by a legendary craftsmans.'),
+	(452,'Gold Armor','An armor made of pur gold.'),
+	(519,'Kritya Circlet','A traditional Krityan headdress.'),
+	(520,'Terra Crest','A headdress popular amongst spell-casters.'),
+	(432,'Splash Dress','A garment coated with a splash of water.'),
+	(433,'Gothic Cardigan','Made the traditional way, this garment will keep you warm.'),
+	(501,'Magical Tiara','A magic crown.'),
+	(502,'Imperial Guard','The quality is worthy of one working for the empire.'),
+	(1000,'Stone Ward','50% chance of petrification.'),
+	(1001,'Laurel','Prevents all magic ailments.'),
+	(1002,'Holy Ring','Occasionally restores 1% of wearers max HP.'),
+	(1010,'Mystic Gem','A mysterious gem said to have magical powers.'),
+	(1011,'Pork Chop','A dog trophy for a pissing contest.'),
+	(1012,'Straw Mask','A mask worn by apprentice monks.'),
+	(1013,'Devil Outfit','A set of devils wings and a tail.'),
+	(1014,'Collectors Book','A book to record items you have obtained.'),
+	(1003,'Attack Ring','Raises attack by 10% in battle.'),
+	(1004,'Blue Sephira','A sculpture of an unnamed goddess. Earn 2x more gald!'),
+	(20,'Rice','A staple tha goes with all kinds of dishes.'),
+	(21,'Strawberry','Goes well with milk and cream.'),
+	(22,'Onion','Particularly pungent.'),
+	(23,'Salmon','A common fish that can be served raw.'),
+	(24,'Beef','Meat this tastly only comes from cows!'),
+	(40,'Apple Gel','A gummi meicine that restores 30% HP.'),
+	(41,'Pineapple Gel','A gummi medicine that restores 60% TP'),
+	(42,'Life Bottle','Spirited water that revives a KOed ally.'),
+	(43,'Red Sage','A medicinal herb that increases max HP by 1.'),
+	(44,'Tent','An all purpose heavy duty tent. Restores 75% HP and TP.');
+
+INSERT INTO consumable_items(itemid)
+	VALUES(40),
+	(41),
+	(42),
+	(43),
+	(44);
+
+INSERT INTO cooking_items(itemid)
+	VALUES(20),
+	(21),
+	(22),
+	(23),
+	(24);
+
+INSERT INTO special_items(itemid)
+	VALUES (1010),
+	(1011),
+	(1012),
+	(1013),
+	(1014);
+
+INSERT INTO accessories (itemid)
+	VALUES (1000),
+	(1001),
+	(1002),
+	(1003),
+	(1004);
+
+INSERT INTO equipment(itemid,character,type,def,mag_def)
+	VALUES (500,'Yuri','helmet',140,30),
+	(699,'Yuri','helmet',300,70),
+	(451,'Yuri','armor',500,300),
+	(452,'Yuri','armor',700,250),
+	(519,'Judith','helmet',100,10),
+	(520,'Judith','helmet',452,200),
+	(432,'Judith','armor',239,39),
+	(433,'Judith','armor',350,100),
+	(501,'Estelle','helmet',120,120),
+	(502,'Estelle','armor',400,300);
+
+
+INSERT INTO weapons(itemid,character,type,hand,atk,mag_atk)
+	VALUES(212,'Yuri','Sword','main',125,25),
+	(102,'Yuri','Sword','main',35,0),
+	(467,'Yuri','Glove','off hand',40,50),
+	(134,'Yuri','Axe','main',140,0),
+	(120,'Judith','Spear','main',435,0),
+	(119,'Judith','Spear','main',419,0),
+	(450,'Judith','Shield','off hand',100,10),
+	(100,'Judith','Staff','main',360,0),
+	(111,'Estelle','Short Sword','main',199,100),
+	(110,'Estelle','Short Sword','main',165,60),
+	(99,'Estelle','Book','off hand',0,350),
+	(399,'Estelle','Rod','main',530,792);
+
+
+INSERT INTO components(itemid)
+	VALUES(780),
+	(803),
+	(798),
+	(670),
+	(680),
+	(920),
+	(918),
+	(950),
+	(948),
+	(930),
+	(928),
+	(791),
+	(792),
+	(802),
+	(799),
+	(742),
+	(741);
+
+INSERT INTO synthesis_components(itemid,component,qty)
+	VALUES (212,780,4),
+	(467,803,2),
+	(467,798,1),
+	(134,670,5),
+	(134,680,3),
+	(120,920,1),
+	(120,918,2),
+	(450,950,1),
+	(450,948,4),
+	(100,930,2),
+	(100,928,2),
+	(111,791,9),
+	(111,792,1),
+	(99,802,15),
+	(99,799,4),
+	(399,742,2),
+	(399,741,10),
+	(500,742,1),
+	(500,780,6),
+	(699,741,1),
+	(699,802,5),
+	(451,799,2),
+	(451,798,7),
+	(452,802,9),
+	(452,803,1),
+	(519,792,5),
+	(519,670,4),
+	(520,791,2),
+	(520,680,3),
+	(432,928, 4),
+	(432,920 , 1),
+	(433,918,2),
+	(433,930 ,3),
+	(501,948, 5),
+	(501, 950, 4),
+	(502,803 , 3),
+	(502, 670 ,2),
+	(1001,799,2),
+	(1001,780,8),
+	(1001,948,3),
+	(1013, 803, 2),
+	(1013, 950, 7),
+	(1013,798 , 10),
+	(1013, 791, 12);
+
+INSERT INTO synthesis_weapon_components(itemid,component)
+	VALUES (212,102),
+	(120,119),
+	(111,110);
+
+INSERT INTO weapon_skills(itemid,skill)
+	VALUES (212,'Swords Up'),
+	(212,'Strength 2'),
+	(467,'Landing Step'),
+	(467,'Hell Fire'),
+	(134,'Super Chain 3'),
+	(120,'Aerial Artes 3'),
+	(120,'Strength 2'),
+	(450,'Great Deluge'),
+	(450,'Aerial Magic Guard'),
+	(100,'Spear Master'),
+	(111,'Athenor'),
+	(110,'Pow Hammer Revenge'),
+	(99,'Eternal Support'),
+	(99,'Auto Medicine'),
+	(399,'Magic 3');
+
+INSERT INTO titles(name,character)
+	VALUES('Dark Enforcer','Yuri'),
+	('True Knight','Yuri'),
+	('Into The Sky','Judith'),
+	('Dragoon','Judith'),
+	('High Priestess','Estelle'),
+	('Royal Succesor','Estelle');
+
+
+CREATE OR REPLACE VIEW ViewAllMainHandWeapons AS
+	SELECT weapons.*,items.name,items.description from items 
+	INNER JOIN weapons ON weapons.itemid  = items.itemid
+	WHERE weapons.hand = 'main'
+	ORDER BY weapons.character, items.itemid ASC;
+
+CREATE OR REPLACE VIEW ViewAllOffHandWeapons AS
+	SELECT weapons.*,items.name,items.description from items 
+	INNER JOIN weapons ON weapons.itemid  = items.itemid
+	WHERE weapons.hand = 'off hand'
+	ORDER BY weapons.character, items.itemid ASC;
+
+CREATE OR REPLACE VIEW ViewAllHelmets AS
+	SELECT equipment.*,items.name,items.description from items 
+	INNER JOIN equipment ON equipment.itemid  = items.itemid
+	WHERE equipment.type = 'helmet'
+	ORDER BY equipment.character, items.itemid ASC;
+
+CREATE OR REPLACE VIEW ViewAllArmor AS
+	SELECT equipment.*,items.name,items.description from items 
+	INNER JOIN equipment ON equipment.itemid  = items.itemid
+	WHERE equipment.type = 'armor'
+	ORDER BY equipment.character, items.itemid ASC;
+
+CREATE OR REPLACE VIEW ViewAllAccessories AS
+	SELECT accessories.*,items.name,items.description from items 
+	INNER JOIN accessories ON accessories.itemid  = items.itemid
+	ORDER BY items.name ASC;
+
+CREATE OR REPLACE VIEW ViewAllSpecialItems AS
+	SELECT special_items.*,items.name,items.description from items 
+	INNER JOIN special_items ON special_items.itemid  = items.itemid
+	ORDER BY items.name ASC;
+
+CREATE OR REPLACE VIEW ViewAllcookingitems AS
+	SELECT cooking_items.*,items.name,items.description from items 
+	INNER JOIN cooking_items ON cooking_items.itemid  = items.itemid
+	ORDER BY items.name ASC;
+
+CREATE OR REPLACE VIEW ViewAllconsumableitems AS
+	SELECT consumable_items.*,items.name,items.description from items 
+	INNER JOIN consumable_items ON consumable_items.itemid  = items.itemid
+	ORDER BY items.name ASC;
+
+CREATE ROLE admin;
+GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA PUBLIC
+TO admin;
+
+CREATE ROLE public;
+GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC 
+TO public;
